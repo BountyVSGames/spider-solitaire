@@ -5,6 +5,12 @@ TextureImporter:
   - first:
       213: -5967451572801405651
     second: playingCardBack
+  - first:
+      213: -658893071663803703
+    second: playingCardBacks_1
+  - first:
+      213: 4651979625543809409
+    second: playingCardBacks_1
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -97,7 +103,7 @@ TextureImporter:
         width: 140
         height: 190
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -105,6 +111,27 @@ TextureImporter:
       bones: []
       spriteID: 71eb8cc9a47aa8c4aa821e11c41a1ebd
       internalID: -5967451572801405651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: playingCardBacks_1
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 834
+        width: 140
+        height: 190
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ffdd2bfaa4442b14ea350c2b484b2d68
+      internalID: 4651979625543809409
       vertices: []
       indices: 
       edges: []

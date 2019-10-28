@@ -87,8 +87,6 @@ namespace Game
                 m_frontCardObject.material = m_selectedMaterial;
             else if (!m_cardSelectState)
                 m_frontCardObject.material = m_normalMaterial;
-
-
         }
     }
 }

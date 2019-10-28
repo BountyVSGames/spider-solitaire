@@ -26,6 +26,10 @@ namespace Game.Manager
             }
         }
 
+        public void LoadScene(int sceneIndex)
+        {
+            SceneManager.LoadScene(sceneIndex);
+        }
         public void RestartCurrenScene()
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);

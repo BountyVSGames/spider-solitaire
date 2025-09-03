@@ -12,9 +12,7 @@ namespace Game
 
         private CardManager m_cardManagerScript;
 
-        private bool m_isCompletePackCheckRunning;
-
-        [SerializeField] private bool m_debugActive;
+        [SerializeField] private bool m_isCompletePackCheckRunning;
 
         #region Properties
             public List<Card> GetHolderObject => m_holderObject;
@@ -25,37 +23,46 @@ namespace Game
             if(m_holderObject == null)
                 m_holderObject = new List<Card>();
 
-            m_cardManagerScript = FindObjectOfType<CardManager>();
+            m_cardManagerScript = FindFirstObjectByType<CardManager>();
 
             m_isCompletePackCheckRunning = false;
         }
-        private void Update()
-        {
-            if (m_holderObject.Count > 0 && Camera.main.WorldToScreenPoint(m_holderObject[m_holderObject.Count - 1].transform.position).y < 30 && !m_debugActive)
-                ScaleCards(true);
-        }
 
-        private void ScaleCards(bool state)
+        public void FinishMove()
         {
-            if(state)
+            if (m_holderObject.Count >= 10)
             {
                 for (int i = 0; i < m_holderObject.Count; i++)
                 {
-                    float scaleX = m_holderObject[i].transform.localScale.x * .8f;
-                    float scaleY = m_holderObject[i].transform.localScale.y * .75f;
-                    m_holderObject[i].transform.localScale = new Vector3(scaleX, scaleY, m_holderObject[i].transform.localScale.z);
-                    m_holderObject[i].transform.localPosition = new Vector3(m_holderObject[i].transform.localPosition.x, m_holderObject[i].transform.localPosition.y + .5f, m_holderObject[i].transform.localPosition.z);
-                }
+                    if (!m_holderObject[i].CardScale)
+                    {
+                        m_holderObject[i].transform.localScale = new Vector3(.8f, .8f, m_holderObject[i].transform.localScale.z);
 
-                m_debugActive = true;
+                        m_holderObject[i].CardScale = true;
+                    }
+                }
             }
+            else
+            {
+                for (int i = 0; i < m_holderObject.Count; i++)
+                {
+                    if (m_holderObject[i].CardScale)
+                    {
+                        m_holderObject[i].transform.localScale = new Vector3(1, 1, m_holderObject[i].transform.localScale.z);
+                        m_holderObject[i].CardScale = false;
+                    }
+                }
+            }
+
+            if (!m_isCompletePackCheckRunning)
+                StartCoroutine(CompletePackCheck());
         }
 
         private IEnumerator CompletePackCheck()
         {
             bool completedPack = false;
             int kingIndex;
-            List<Card> cardSet = new List<Card>();
+            List<Card> cardSet = new();
 
             m_isCompletePackCheckRunning = true;
 
@@ -105,6 +112,7 @@ namespace Game
                 for (int i = 0; i < cardSet.Count; i++)
                 {
                     cardSet[i].GetCurrentHolder.RemoveObjectFromHolder(cardSet[i]);
+                    cardSet[i].SelectCard(false);
                     m_cardManagerScript.RemoveCard((cardSet[i]));
 
                     yield return new WaitForSeconds(.005f);
@@ -117,9 +125,6 @@ namespace Game
         public void AddObjectToHolder(Card holderObject)
         {
             m_holderObject.Add(holderObject);
-
-            if(holderObject.CardShown && !m_isCompletePackCheckRunning)
-                StartCoroutine(CompletePackCheck());
         }
         public void RemoveObjectFromHolder(Card holderObject)
         {
@@ -127,6 +132,12 @@ namespace Game
 
             if (indexOfHolderObject > (m_holderObject.Count + 1))
                 return;
+
+            if(holderObject.CardScale)
+            {
+                holderObject.transform.localScale = new Vector3(1, 1, holderObject.transform.localScale.z);
+                holderObject.CardScale = false;
+            }
 
             m_holderObject.Remove(m_holderObject[indexOfHolderObject]);
 

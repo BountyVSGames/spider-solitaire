@@ -51,6 +51,7 @@ namespace Game.Manager
                     index++;
                 }
             }
+
             for(int i = 0; i < m_shuffleCounts; i ++)
             {
                 for (int j = 0; j < m_allCards.Count; j++)
@@ -72,7 +73,7 @@ namespace Game.Manager
         }
         private void Start()
         {
-            m_uiManagerScript = FindObjectOfType<UIManager>();
+            m_uiManagerScript = FindFirstObjectByType<UIManager>();
 
             StartCoroutine(SpawnCardsOnHolders(m_cardToSpawn));
         }

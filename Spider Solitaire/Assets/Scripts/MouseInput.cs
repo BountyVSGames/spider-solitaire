@@ -16,7 +16,7 @@ namespace Game.MouseInput
         private int m_test;
         private void Start()
         {
-            m_cardManager = FindObjectOfType<CardManager>();
+            m_cardManager = FindFirstObjectByType<CardManager>();
         }
         private void Update()
         {
@@ -65,11 +65,8 @@ namespace Game.MouseInput
 
                     if (currentSelectedCard.GetCurrentHolder != null && currentSelectedCard.GetCurrentHolder.IndexOfObjectInHolder(currentSelectedCard) < (currentSelectedCard.GetCurrentHolder.GetHolderObject.Count - 1))
                     {
-                        if(currentSelectedCard.GetCurrentHolder.IndexOfObjectInHolder(currentSelectedCard) < (currentSelectedCard.GetCurrentHolder.GetHolderObject.Count - 1))
-                        {
-                            m_selectedCardObjects = currentSelectedCard.GetCurrentHolder.GetCardMatch(currentSelectedCard.GetCurrentHolder.IndexOfObjectInHolder(currentSelectedCard));
-                            m_selectedCardObjects[0].SelectCard(true);
-                        }
+                        m_selectedCardObjects = currentSelectedCard.GetCurrentHolder.GetCardMatch(currentSelectedCard.GetCurrentHolder.IndexOfObjectInHolder(currentSelectedCard));
+                        m_selectedCardObjects[0].SelectCard(true);
 
                         return;
                     }
@@ -78,37 +75,46 @@ namespace Game.MouseInput
                     m_selectedCardObjects[0].SelectCard(true);
                     return;
                 }
-                else if(m_selectedCardObjects.Count > 0 && hit2D.collider.GetComponent<CardHolder>() != null)
+                else if(m_selectedCardObjects.Count > 0)
                 {
-                    if (hit2D.collider.GetComponent<CardHolder>().DoesTheCardFit(m_selectedCardObjects[0]) && (m_selectedCardObjects[0].GetCurrentHolder == null || m_selectedCardObjects[0].GetCurrentHolder != hit2D.collider.GetComponent<CardHolder>()))
+                    CardHolder originalCardHolder = m_selectedCardObjects[0].GetCurrentHolder;
+
+                    if (hit2D.collider.GetComponent<CardHolder>() != null)
                     {
-                        for (int i = 0; i < m_selectedCardObjects.Count; i++)
+                        if (hit2D.collider.GetComponent<CardHolder>().DoesTheCardFit(m_selectedCardObjects[0]) && (m_selectedCardObjects[0].GetCurrentHolder == null || m_selectedCardObjects[0].GetCurrentHolder != hit2D.collider.GetComponent<CardHolder>()))
                         {
-                            m_selectedCardObjects[i].SetCardHolder(hit2D.collider.GetComponent<CardHolder>());
+                            for (int i = 0; i < m_selectedCardObjects.Count; i++)
+                            {
+                                m_selectedCardObjects[i].SetCardHolder(hit2D.collider.GetComponent<CardHolder>());
+                            }
+
+                            originalCardHolder.FinishMove();
+                            hit2D.collider.GetComponent<CardHolder>().FinishMove();
+                            m_cardManager.SetNumberOfMoves(m_cardManager.NumberOfMoves + 1);
                         }
                     }
-
-                    m_cardManager.SetNumberOfMoves(m_cardManager.NumberOfMoves + 1);
-                }
-                else if (m_selectedCardObjects.Count > 0 && hit2D.collider.GetComponent<Card>() != null)
-                {
-                    if (hit2D.collider.GetComponent<Card>().GetCurrentHolder != null && hit2D.collider.GetComponent<Card>().GetCurrentHolder.DoesTheCardFit(m_selectedCardObjects[0]) && m_selectedCardObjects[0].GetCurrentHolder != hit2D.collider.GetComponent<Card>().GetCurrentHolder)
+                    else if(hit2D.collider.GetComponent<Card>() != null)
                     {
-                        for (int i = 0; i < m_selectedCardObjects.Count; i++)
+                        if (hit2D.collider.GetComponent<Card>().GetCurrentHolder != null && hit2D.collider.GetComponent<Card>().GetCurrentHolder.DoesTheCardFit(m_selectedCardObjects[0]) && m_selectedCardObjects[0].GetCurrentHolder != hit2D.collider.GetComponent<Card>().GetCurrentHolder)
                         {
-                            m_selectedCardObjects[i].SetCardHolder(hit2D.collider.GetComponent<Card>().GetCurrentHolder);    
-                        }
-                    }
+                            for (int i = 0; i < m_selectedCardObjects.Count; i++)
+                            {
+                                m_selectedCardObjects[i].SetCardHolder(hit2D.collider.GetComponent<Card>().GetCurrentHolder);
+                            }
 
-                    m_cardManager.SetNumberOfMoves(m_cardManager.NumberOfMoves + 1);
+                            originalCardHolder.FinishMove();
+                            hit2D.collider.GetComponent<Card>().GetCurrentHolder.FinishMove();
+                            m_cardManager.SetNumberOfMoves(m_cardManager.NumberOfMoves + 1);
+                        }
+                    }       
                 }
 
-                if (m_selectedCardObjects.Count > 0)
+                if (m_selectedCardObjects.Count > 0 && m_selectedCardObjects[0] != null)
                 {
                     m_selectedCardObjects[0].SelectCard(false);
-                    m_selectedCardObjects.Clear();
-                    return;
                 }
+
+                m_selectedCardObjects.Clear();
             }
             else if(Input.GetMouseButtonDown(0) && m_selectedCardObjects.Count > 0)
             {

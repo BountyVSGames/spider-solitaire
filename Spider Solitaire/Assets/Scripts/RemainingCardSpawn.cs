@@ -13,7 +13,7 @@ namespace Game
 
         private void Start()
         {
-            m_cardManager = FindObjectOfType<CardManager>();
+            m_cardManager = FindFirstObjectByType<CardManager>();
         }
 
         public void OnClick()
